@@ -1,80 +1,132 @@
+// React Native Axios – To Make HTTP API call in React Native
+// https://aboutreact.com/react-native-axios/
+
 import React from 'react';
-import { StyleSheet, Button, View, SafeAreaView, Text, Alert } from 'react-native';
+//import React in our code.
+import {StyleSheet, View, TouchableOpacity, Text, Alert} from 'react-native';
+//import all the components we are going to use.
+import axios from 'axios';
 
-const Separator = () => (
-  <View style={styles.separator} />
-);
+const App = () => {
+  const getDataUsingSimpleGetCall = () => {
+    axios
+      .get('https://jsonplaceholder.typicode.com/posts/1')
+      .then(function (response) {
+        // handle success
+        Alert.alert(JSON.stringify(response.data));
+      })
+      .catch(function (error) {
+        // handle error
+        Alert.alert(error.message);
+      })
+      .finally(function () {
+        // always executed
+        Alert.alert('Finally called');
+      });
+  };
 
-const App = () => (
-  <SafeAreaView style={styles.container}>
-    <View>
-      <Text style={styles.title}>
-        The title and onPress handler are required. It is recommended to set accessibilityLabel to help make your app usable by everyone.
+  const getDataUsingAsyncAwaitGetCall = async () => {
+    try {
+      const response = await axios.get(
+        'https://jsonplaceholder.typicode.com/posts/1',
+      );
+      Alert.alert(JSON.stringify(response.data));
+    } catch (error) {
+      // handle error
+      Alert.alert(error.message);
+    }
+  };
+
+  const postDataUsingSimplePostCall = () => {
+    axios
+      .post('https://jsonplaceholder.typicode.com/posts', {
+        title: 'foo',
+        body: 'bar',
+        userId: 1,
+      })
+      .then(function (response) {
+        // handle success
+        Alert.alert(JSON.stringify(response.data));
+      })
+      .catch(function (error) {
+        // handle error
+        Alert.alert(error.message);
+      });
+  };
+
+  const multipleRequestsInSingleCall = () => {
+    axios
+      .all([
+        axios
+          .get('https://jsonplaceholder.typicode.com/posts/1')
+          .then(function (response) {
+            // handle success
+            Alert.alert('Post 1 : ' + JSON.stringify(response.data));
+          }),
+        axios
+          .get('https://jsonplaceholder.typicode.com/posts/2')
+          .then(function (response) {
+            // handle success
+            Alert.alert('Post 2 : ' + JSON.stringify(response.data));
+          }),
+      ])
+      .then(
+        axios.spread(function (acct, perms) {
+          // Both requests are now complete
+          Alert.alert('Both requests are now complete');
+        }),
+      );
+  };
+
+  return (
+    <View style={styles.container}>
+      <Text style={{fontSize: 30, textAlign: 'center'}}>
+        Example of Axios Networking in React Native
       </Text>
-      <Button
-        title="Press me"
-        onPress={() => Alert.alert('Simple Button pressed')}
-      />
-    </View>
-    <Separator />
-    <View>
-      <Text style={styles.title}>
-        Adjust the color in a way that looks standard on each platform. On  iOS, the color prop controls the color of the text. On Android, the color adjusts the background color of the button.
+      {/*Running GET Request*/}
+      <TouchableOpacity
+        style={styles.buttonStyle}
+        onPress={getDataUsingSimpleGetCall}>
+        <Text>Simple Get Call</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.buttonStyle}
+        onPress={getDataUsingAsyncAwaitGetCall}>
+        <Text>Get Data Using Async Await GET</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.buttonStyle}
+        onPress={postDataUsingSimplePostCall}>
+        <Text>Post Data Using POST</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.buttonStyle}
+        onPress={multipleRequestsInSingleCall}>
+        <Text>Multiple Concurrent Requests In Single Call</Text>
+      </TouchableOpacity>
+
+      <Text style={{textAlign: 'center', marginTop: 18}}>
+        www.aboutreact.com
       </Text>
-      <Button
-        title="Press me"
-        color="#f194ff"
-        onPress={() => Alert.alert('Button with adjusted color pressed')}
-      />
     </View>
-    <Separator />
-    <View>
-      <Text style={styles.title}>
-        All interaction for the component are disabled.
-      </Text>
-      <Button
-        title="Press me"
-        disabled
-        onPress={() => Alert.alert('Cannot press this one')}
-      />
-    </View>
-    <Separator />
-    <View>
-      <Text style={styles.title}>
-        This layout strategy lets the title define the width of the button.
-      </Text>
-      <View style={styles.fixToText}>
-        <Button
-          title="Left button"
-          onPress={() => Alert.alert('Left button pressed')}
-        />
-        <Button
-          title="Right button"
-          onPress={() => Alert.alert('Right button pressed')}
-        />
-      </View>
-    </View>
-  </SafeAreaView>
-);
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     justifyContent: 'center',
-    marginHorizontal: 16,
+    flex: 1,
+    padding: 16,
   },
-  title: {
-    textAlign: 'center',
-    marginVertical: 8,
-  },
-  fixToText: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  separator: {
-    marginVertical: 8,
-    borderBottomColor: '#737373',
-    borderBottomWidth: StyleSheet.hairlineWidth,
+  buttonStyle: {
+    alignItems: 'center',
+    backgroundColor: '#DDDDDD',
+    padding: 10,
+    width: '100%',
+    marginTop: 16,
   },
 });
 

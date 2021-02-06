@@ -26,13 +26,11 @@ public class Producteur {
 	private String erreur;
 	
 	public Producteur() {
-		super();
-		// TODO Auto-generated constructor stub
+	
 	}
 	
 	public Producteur(String zone, String fokontany, Date inscription, String nom, String genre, Date naissance,
 			String compte, String erreur) {
-		super();
 		this.zone = zone;
 		this.fokontany = fokontany;
 		this.inscription = inscription;
